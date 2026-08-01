@@ -1,2 +1,2 @@
-:HL["/eco-type-diagnosis/_next/static/css/10dcaaf92f445ac0.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"Q3RWwETAO-C94-r_BhhYY"}
+:HL["/eco-type-diagnosis/_next/static/css/3a00daee7228dbde.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"toncah4Ip5Jp33uzKF-gv"}
