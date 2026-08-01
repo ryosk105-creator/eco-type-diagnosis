@@ -81,6 +81,7 @@ function rank(score: number) {
 export default function Home() {
   const [screen, setScreen] = useState<"home" | "quiz" | "result">("home");
   const [answers, setAnswers] = useState<number[]>([]);
+  const [saving, setSaving] = useState(false);
 
   const result = useMemo(() => {
     const totals = emptyScores();
@@ -112,6 +113,71 @@ export default function Home() {
 
   const restart = () => { setAnswers([]); setScreen("home"); };
 
+  const saveResultImage = async () => {
+    setSaving(true);
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1080;
+      canvas.height = 1350;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      const family = families[result.main];
+      ctx.fillStyle = family.color;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(255,255,255,.12)";
+      for (let x = 0; x < canvas.width; x += 54) ctx.fillRect(x, 0, 2, canvas.height);
+      for (let y = 0; y < canvas.height; y += 54) ctx.fillRect(0, y, canvas.width, 2);
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 42px sans-serif";
+      ctx.fillText("あなたの ECO タイプは…", 540, 88);
+      ctx.font = "800 70px sans-serif";
+      ctx.fillText(result.name, 540, 170);
+      ctx.font = "800 44px sans-serif";
+      ctx.fillText(`${result.code}  ｜  知識力 ${result.scores.K}点`, 540, 235);
+
+      const character = new Image();
+      character.src = `./characters/${result.code.toLowerCase()}.png`;
+      await new Promise<void>((resolve) => { character.onload = () => resolve(); character.onerror = () => resolve(); });
+      if (character.naturalWidth) {
+        const ratio = Math.min(470 / character.naturalWidth, 420 / character.naturalHeight);
+        const width = character.naturalWidth * ratio;
+        const height = character.naturalHeight * ratio;
+        ctx.drawImage(character, (1080 - width) / 2, 270, width, height);
+      }
+
+      ctx.fillStyle = "rgba(255,255,255,.94)";
+      ctx.beginPath();
+      ctx.roundRect(90, 710, 900, 500, 34);
+      ctx.fill();
+      ctx.textAlign = "left";
+      const axes: Axis[] = ["K", "J", "A", "P", "C"];
+      axes.forEach((axis, index) => {
+        const y = 770 + index * 82;
+        ctx.fillStyle = "#153d24";
+        ctx.font = "700 31px sans-serif";
+        ctx.fillText(`${axis}  ${axisMeta[axis].label}`, 140, y + 27);
+        ctx.fillStyle = "#dfe8e1";
+        ctx.fillRect(350, y, 520, 32);
+        ctx.fillStyle = axisMeta[axis].color;
+        ctx.fillRect(350, y, 520 * result.scores[axis] / 100, 32);
+        ctx.fillStyle = "#153d24";
+        ctx.font = "800 29px sans-serif";
+        ctx.fillText(`${result.scores[axis]}点`, 890, y + 27);
+      });
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 28px sans-serif";
+      ctx.fillText("ECOタイプ全国調査", 540, 1295);
+      const link = document.createElement("a");
+      link.download = `eco-type-${result.code}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <main className={`site-shell screen-${screen}`}>
       {screen === "home" && (
@@ -133,7 +199,7 @@ export default function Home() {
             {questions.map((question, questionIndex) => (
               <div className="question-wrap" key={question.text}>
                 {[0,10,20,25,29].includes(questionIndex) && <div className="remaining"><small>{questionIndex === 29 ? "LAST" : "残り"}</small>{questionIndex === 29 ? null : <><b>{questions.length - questionIndex}</b><em>問</em></>}</div>}
-                <div className="question-card" style={{ height: question.options.length === 2 ? 153 : question.options.length === 3 ? 198 : 223 }}>
+                <div className="question-card" style={{ minHeight: question.options.length === 2 ? 190 : question.options.length === 3 ? 230 : 270 }}>
                   <span className="question-number">Q{questionIndex + 1}</span>
                   <h2>{question.text}</h2>
                   {question.note && <p className="question-note">※{question.note}</p>}
@@ -155,12 +221,18 @@ export default function Home() {
           <h1>{result.name}</h1>
           <div className="result-code"><span>RANK<b>{result.grade}</b></span><strong>{result.scores.K}<small>点</small></strong></div>
           <img className="character" src={`./characters/${result.code.toLowerCase()}.png`} alt={result.name} />
-          <div className="radar" aria-label="5つの力のバランス">
-            <div className="radar-grid" /><div className="radar-shape" style={{ clipPath:`polygon(50% ${50-result.scores.K*.45}%, ${50+result.scores.J*.43}% ${50-result.scores.J*.14}%, ${50+result.scores.A*.27}% ${50+result.scores.A*.37}%, ${50-result.scores.P*.27}% ${50+result.scores.P*.37}%, ${50-result.scores.C*.43}% ${50-result.scores.C*.14}%)` }} />
-            <span className="r-k">K</span><span className="r-j">J</span><span className="r-a">A</span><span className="r-p">P</span><span className="r-c">C</span>
+          <div className="score-bars" aria-label="5つの項目の得点">
+            {(Object.keys(axisMeta) as Axis[]).sort((a, b) => result.scores[a] - result.scores[b]).map((axis, index) => (
+              <div className={`score-row ${index === 0 ? "challenge" : ""}`} key={axis}>
+                <span><b>{axis}</b>{axisMeta[axis].label}</span>
+                <i><em style={{ width: `${result.scores[axis]}%`, background: axisMeta[axis].color }} /></i>
+                <strong>{result.scores[axis]}</strong>
+              </div>
+            ))}
+            <p>課題が大きい項目から表示しています</p>
           </div>
           <p className="result-copy">{descriptions[result.main]}</p>
-          <div className="actions"><button className="result-next" onClick={() => navigator.clipboard?.writeText(`私のECOタイプは「${result.name}（${result.code}）」でした！`)}>結果をコピー</button><button className="result-restart" onClick={restart}>もう一度診断する</button></div>
+          <div className="actions"><button className="result-next" onClick={saveResultImage} disabled={saving}>{saving ? "画像を作成中…" : "結果画像を保存"}</button><button className="result-restart" onClick={restart}>もう一度診断する</button></div>
         </section>
       )}
 
