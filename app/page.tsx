@@ -190,9 +190,8 @@ export default function Home() {
       {screen === "quiz" && (
         <section className="quiz panel-enter">
           <div className="quiz-intro">
-            <img className="quiz-logo" src="./eco-logo-transparent.png" alt="ECOタイプ全国調査" />
-            <div className="axis-line"><span>K</span><span>J</span><span>A</span><span>P</span><span>C</span></div>
-            <div className="intro-radar"><i /></div>
+            <img className="quiz-logo" src="./eco-logo-figma.png" alt="ECOタイプ全国調査" />
+            <img className="quiz-overview" src="./quiz-intro-figma.png" alt="5つの力を分析し、全18タイプに分類する自己診断ツール" />
             <div className="start-divider"><span>問題開始</span></div>
           </div>
           <div className="questions-stack">
