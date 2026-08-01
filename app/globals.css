@@ -6,6 +6,11 @@ html { background:#e8e8e8; }
 body { margin:0; color:var(--deep); font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; }
 button { font:inherit; }
 .site-shell { width:min(100%,393px); min-height:100svh; position:relative; margin:auto; overflow:hidden; padding:50px 26px 28px; background-color:var(--paper); background-image:linear-gradient(rgba(71,151,17,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(71,151,17,.12) 1px,transparent 1px); background-size:18px 18px; box-shadow:0 0 38px #0002; }
+.site-shell.screen-home { padding:0; background:#21bb55; }
+.thumbnail { position:relative; width:100%; min-height:0; margin:0; }
+.thumbnail img { display:block; width:100%; height:auto; }
+.thumbnail-start { position:absolute; left:24.3%; right:24.3%; top:78.4%; height:7.1%; border:0; border-radius:999px; background:transparent; cursor:pointer; }
+.thumbnail-start:focus-visible { outline:4px solid #fff; outline-offset:4px; }
 .stripe { position:absolute; z-index:3; left:0; right:0; height:25px; background:repeating-linear-gradient(-48deg,var(--green) 0 7px,#fff 7px 14px); }
 .stripe-top { top:0; }.stripe-bottom { bottom:0; }
 .brand { width:102px; line-height:.82; margin:0 auto; display:flex; align-items:flex-end; gap:5px; color:var(--deep); }

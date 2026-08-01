@@ -116,20 +116,14 @@ export default function Home() {
   const restart = () => { setAnswers([]); setIndex(0); setScreen("home"); };
 
   return (
-    <main className="site-shell">
-      <div className="stripe stripe-top" />
-      {screen !== "result" && <header className="brand"><span>ECO</span><small>タイプ<br />全国調査</small></header>}
+    <main className={`site-shell screen-${screen}`}>
+      {screen === "quiz" && <div className="stripe stripe-top" />}
+      {screen === "quiz" && <header className="brand"><span>ECO</span><small>タイプ<br />全国調査</small></header>}
 
       {screen === "home" && (
-        <section className="hero panel-enter">
-          <div className="eyebrow">あなたの「なんとなく」を答え合わせ</div>
-          <h1>あなたの<br /><em>ECOタイプ</em>は？</h1>
-          <p className="lead">エコの知識と行動の傾向が、<br />遊び感覚でわかる自己診断ツール。</p>
-          <div className="power-row" aria-label="診断する5つの力">
-            {(Object.keys(axisMeta) as Axis[]).map((key) => <span key={key} style={{ "--axis": axisMeta[key].color } as React.CSSProperties}><b>{key}</b>{axisMeta[key].label}</span>)}
-          </div>
-          <button className="primary" onClick={() => setScreen("quiz")}>診断をはじめる <span>→</span></button>
-          <p className="note">全30問・約5分</p>
+        <section className="thumbnail panel-enter">
+          <img src="./thumbnail.png" alt="ECOタイプ全国調査。あなたのなんとなくやっているエコ活動を、遊び感覚で答え合わせできる自己診断ツール" />
+          <button className="thumbnail-start" onClick={() => setScreen("quiz")} aria-label="回答する" />
         </section>
       )}
 
@@ -165,8 +159,8 @@ export default function Home() {
         </section>
       )}
 
-      {screen !== "result" && <footer>SETAGAYA × ECO TYPE PROJECT</footer>}
-      <div className="stripe stripe-bottom" />
+      {screen === "quiz" && <footer>SETAGAYA × ECO TYPE PROJECT</footer>}
+      {screen === "quiz" && <div className="stripe stripe-bottom" />}
     </main>
   );
 }
