@@ -80,7 +80,6 @@ function rank(score: number) {
 
 export default function Home() {
   const [screen, setScreen] = useState<"home" | "quiz" | "result">("home");
-  const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
 
   const result = useMemo(() => {
@@ -105,21 +104,16 @@ export default function Home() {
     return { scores, main, grade, code, name: names[code] };
   }, [answers]);
 
-  const answer = (value: number) => {
+  const answerAt = (questionIndex: number, value: number) => {
     const next = [...answers];
-    next[index] = value;
+    next[questionIndex] = value;
     setAnswers(next);
-    if (index === questions.length - 1) setScreen("result");
-    else setIndex(index + 1);
   };
 
-  const restart = () => { setAnswers([]); setIndex(0); setScreen("home"); };
+  const restart = () => { setAnswers([]); setScreen("home"); };
 
   return (
     <main className={`site-shell screen-${screen}`}>
-      {screen === "quiz" && <div className="stripe stripe-top" />}
-      {screen === "quiz" && <header className="quiz-logo"><img src="./eco-logo.png" alt="ECOタイプ全国調査" /></header>}
-
       {screen === "home" && (
         <section className="thumbnail">
           <img src="./thumbnail-latest.png" alt="ECOタイプ全国調査。あなたのなんとなくやっているエコ活動を、遊び感覚で答え合わせできる自己診断ツール" />
@@ -129,16 +123,29 @@ export default function Home() {
 
       {screen === "quiz" && (
         <section className="quiz panel-enter">
-          <div className="remaining"><small>{index === questions.length - 1 ? "LAST" : "残り"}</small>{index === questions.length - 1 ? null : <><b>{questions.length - index}</b><em>問</em></>}</div>
-          <div className="question-card" style={{ height: questions[index].options.length === 2 ? 153 : questions[index].options.length === 3 ? 198 : 223 }}>
-            <span className="question-number">Q{index + 1}</span>
-            <h2>{questions[index].text}</h2>
-            {questions[index].note && <p className="question-note">※{questions[index].note}</p>}
-            <div className="answer-list">
-              {questions[index].options.map((option, n) => <button key={option} onClick={() => answer(n)}><i />{option}</button>)}
-            </div>
+          <div className="quiz-intro">
+            <img className="quiz-logo" src="./eco-logo-transparent.png" alt="ECOタイプ全国調査" />
+            <div className="axis-line"><span>K</span><span>J</span><span>A</span><span>P</span><span>C</span></div>
+            <div className="intro-radar"><i /></div>
+            <div className="start-divider"><span>問題開始</span></div>
           </div>
-          {index > 0 && <button className="back" onClick={() => setIndex(index - 1)}>← 前の質問へ</button>}
+          <div className="questions-stack">
+            {questions.map((question, questionIndex) => (
+              <div className="question-wrap" key={question.text}>
+                {[0,10,20,25,29].includes(questionIndex) && <div className="remaining"><small>{questionIndex === 29 ? "LAST" : "残り"}</small>{questionIndex === 29 ? null : <><b>{questions.length - questionIndex}</b><em>問</em></>}</div>}
+                <div className="question-card" style={{ height: question.options.length === 2 ? 153 : question.options.length === 3 ? 198 : 223 }}>
+                  <span className="question-number">Q{questionIndex + 1}</span>
+                  <h2>{question.text}</h2>
+                  {question.note && <p className="question-note">※{question.note}</p>}
+                  <div className="answer-list">
+                    {question.options.map((option, n) => <button className={answers[questionIndex] === n ? "selected" : ""} key={option} onClick={() => answerAt(questionIndex, n)}><i />{option}</button>)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button className="show-result" disabled={answers.filter((answer) => answer !== undefined).length !== questions.length} onClick={() => setScreen("result")}>診断結果を見る</button>
+          {answers.filter((answer) => answer !== undefined).length !== questions.length && <p className="unanswered">あと{questions.length - answers.filter((answer) => answer !== undefined).length}問です</p>}
         </section>
       )}
 
@@ -158,7 +165,6 @@ export default function Home() {
       )}
 
       {screen === "quiz" && <footer>SETAGAYA × ECO TYPE PROJECT</footer>}
-      {screen === "quiz" && <div className="stripe stripe-bottom" />}
     </main>
   );
 }
