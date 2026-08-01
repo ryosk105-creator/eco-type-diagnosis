@@ -2,4 +2,4 @@
 2:I[7121,[],""]
 3:I[4581,[],""]
 :HL["/eco-type-diagnosis/_next/static/css/858aef94751d265d.css","style"]
-0:{"rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/eco-type-diagnosis/_next/static/css/858aef94751d265d.css","precedence":"next"}]],["$","html",null,{"lang":"ja","children":["$","body",null,{"children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"jHJO_ZXTrVXVED8l8AtkH"}
+0:{"rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/eco-type-diagnosis/_next/static/css/858aef94751d265d.css","precedence":"next"}]],["$","html",null,{"lang":"ja","children":["$","body",null,{"children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"faipOobsF16IKEZboQqqW"}
