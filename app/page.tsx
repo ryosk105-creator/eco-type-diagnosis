@@ -118,10 +118,10 @@ export default function Home() {
   return (
     <main className={`site-shell screen-${screen}`}>
       {screen === "quiz" && <div className="stripe stripe-top" />}
-      {screen === "quiz" && <header className="brand"><span>ECO</span><small>タイプ<br />全国調査</small></header>}
+      {screen === "quiz" && <header className="quiz-logo"><img src="./eco-logo.png" alt="ECOタイプ全国調査" /></header>}
 
       {screen === "home" && (
-        <section className="thumbnail panel-enter">
+        <section className="thumbnail">
           <img src="./thumbnail.png" alt="ECOタイプ全国調査。あなたのなんとなくやっているエコ活動を、遊び感覚で答え合わせできる自己診断ツール" />
           <button className="thumbnail-start" onClick={() => setScreen("quiz")} aria-label="回答する" />
         </section>
@@ -129,11 +129,9 @@ export default function Home() {
 
       {screen === "quiz" && (
         <section className="quiz panel-enter">
-          <div className="progress-head"><span>ECOタイプ 全国調査</span><span>{index + 1} / {questions.length}</span></div>
-          <div className="progress"><i style={{ width: `${((index + 1) / questions.length) * 100}%` }} /></div>
+          <div className="remaining"><small>{index === questions.length - 1 ? "LAST" : "残り"}</small>{index === questions.length - 1 ? null : <><b>{questions.length - index}</b><em>問</em></>}</div>
           <div className="question-card">
-            <span className="question-number">Q.{String(index + 1).padStart(2, "0")}</span>
-            <span className="question-axis" style={{ color: axisMeta[questions[index].axis].color }}>{questions[index].axis} / {axisMeta[questions[index].axis].label}</span>
+            <span className="question-number">Q{index + 1}</span>
             <h2>{questions[index].text}</h2>
             {questions[index].note && <p className="question-note">※{questions[index].note}</p>}
             <div className="answer-list">
