@@ -122,7 +122,7 @@ export default function Home() {
 
       {screen === "home" && (
         <section className="thumbnail">
-          <img src="./thumbnail.png" alt="ECOタイプ全国調査。あなたのなんとなくやっているエコ活動を、遊び感覚で答え合わせできる自己診断ツール" />
+          <img src="./thumbnail-latest.png" alt="ECOタイプ全国調査。あなたのなんとなくやっているエコ活動を、遊び感覚で答え合わせできる自己診断ツール" />
           <button className="thumbnail-start" onClick={() => setScreen("quiz")} aria-label="回答する" />
         </section>
       )}
@@ -130,7 +130,7 @@ export default function Home() {
       {screen === "quiz" && (
         <section className="quiz panel-enter">
           <div className="remaining"><small>{index === questions.length - 1 ? "LAST" : "残り"}</small>{index === questions.length - 1 ? null : <><b>{questions.length - index}</b><em>問</em></>}</div>
-          <div className="question-card">
+          <div className="question-card" style={{ height: questions[index].options.length === 2 ? 153 : questions[index].options.length === 3 ? 198 : 223 }}>
             <span className="question-number">Q{index + 1}</span>
             <h2>{questions[index].text}</h2>
             {questions[index].note && <p className="question-note">※{questions[index].note}</p>}
