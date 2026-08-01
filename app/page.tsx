@@ -56,10 +56,17 @@ const families = {
 } as const;
 
 const names: Record<string, string> = {
-  JS: "エコ博士", JA: "ブルーオウル", JB: "グリーン教授", JC: "みきわめボーイ",
-  AS: "ハイブリット団長", AA: "バイオマスゴリラ", AB: "森のビーバー", AC: "リサイクル星人",
-  PS: "リボンナイト", PA: "サーキュラー紳士", PB: "エコファイター", PC: "エコドラゴンの卵",
-  CS: "バイオマスエンジェル", CA: "リーフ伯爵", CB: "サステナ優等生", CC: "エコベイビー",
+  JS: "エンバイロ博士", JA: "エコフクロウ", JB: "環境会計士", JC: "サステナ中学生",
+  AS: "CO2CO2職人", AA: "コマメキーパー", AB: "リユースビーバー", AC: "見習い分別アリ",
+  PS: "地球先導者", PA: "リサイクルダンサー", PB: "ハイブリッド団長", PC: "エコドラゴンの卵",
+  CS: "バイオマスエンジェル", CA: "カーボン神父", CB: "スナック「ECO」のママ", CC: "おすそわけベイビー",
+};
+
+const descriptions: Record<keyof typeof families, string> = {
+  J: "環境に関する「知識力」と、その裏に隠された真実を冷静に見抜く「見極力」を兼ね備えています。感情論やグリーンウォッシュに惑わされず、社会が進むべき合理的で効果的な道筋を照らす羅針盤です。",
+  A: "環境に関する知識を、毎日の小さな選択へ着実に変える「行動力」の持ち主です。無理なく続く習慣を積み重ね、身近な場所から確かな変化を生み出しています。",
+  P: "未来を見通す知識と、新しい仕組みを選び取る力を持っています。変化を恐れず一歩先の選択を続ける姿が、社会の大きな転換を後押しします。",
+  C: "環境への思いを人に伝え、仲間と力を合わせることが得意です。あなたの共感と声かけが周囲を動かし、やがて大きなアクションの輪へ育っていきます。",
 };
 
 const emptyScores = (): Scores => ({ J: 0, A: 0, P: 0, C: 0, K: 0 });
@@ -111,7 +118,7 @@ export default function Home() {
   return (
     <main className="site-shell">
       <div className="stripe stripe-top" />
-      <header className="brand"><span>ECO</span><small>タイプ<br />全国調査</small></header>
+      {screen !== "result" && <header className="brand"><span>ECO</span><small>タイプ<br />全国調査</small></header>}
 
       {screen === "home" && (
         <section className="hero panel-enter">
@@ -128,9 +135,10 @@ export default function Home() {
 
       {screen === "quiz" && (
         <section className="quiz panel-enter">
-          <div className="progress-head"><span>QUESTION {String(index + 1).padStart(2, "0")}</span><span>{index + 1} / {questions.length}</span></div>
+          <div className="progress-head"><span>ECOタイプ 全国調査</span><span>{index + 1} / {questions.length}</span></div>
           <div className="progress"><i style={{ width: `${((index + 1) / questions.length) * 100}%` }} /></div>
           <div className="question-card">
+            <span className="question-number">Q.{String(index + 1).padStart(2, "0")}</span>
             <span className="question-axis" style={{ color: axisMeta[questions[index].axis].color }}>{questions[index].axis} / {axisMeta[questions[index].axis].label}</span>
             <h2>{questions[index].text}</h2>
             {questions[index].note && <p className="question-note">※{questions[index].note}</p>}
@@ -144,24 +152,20 @@ export default function Home() {
 
       {screen === "result" && (
         <section className="result panel-enter" style={{ "--family": families[result.main].color } as React.CSSProperties}>
-          <p className="result-intro">あなたのECOタイプは…</p>
-          <div className="result-code"><span>RANK</span><b>{result.code}</b><strong>{result.scores.K}<small>点</small></strong></div>
-          <p className="family-name">{families[result.main].name}</p>
+          <p className="result-intro">あなたの <b>ECO</b> タイプは…</p>
           <h1>{result.name}</h1>
-          <div className="character-placeholder" aria-label="キャラクター画像の配置予定地">
-            <span>{result.code}</span><small>CHARACTER<br />COMING SOON</small>
+          <div className="result-code"><span>RANK<b>{result.grade}</b></span><strong>{result.scores.K}<small>点</small></strong></div>
+          <img className="character" src={`./characters/${result.code.toLowerCase()}.png`} alt={result.name} />
+          <div className="radar" aria-label="5つの力のバランス">
+            <div className="radar-grid" /><div className="radar-shape" style={{ clipPath:`polygon(50% ${50-result.scores.K*.45}%, ${50+result.scores.J*.43}% ${50-result.scores.J*.14}%, ${50+result.scores.A*.27}% ${50+result.scores.A*.37}%, ${50-result.scores.P*.27}% ${50+result.scores.P*.37}%, ${50-result.scores.C*.43}% ${50-result.scores.C*.14}%)` }} />
+            <span className="r-k">K</span><span className="r-j">J</span><span className="r-a">A</span><span className="r-p">P</span><span className="r-c">C</span>
           </div>
-          <p className="result-copy">{families[result.main].lead}力と、環境に関する知識をあわせ持つタイプです。あなたが何気なく続けている行動は、社会を少しずつ前へ進めています。</p>
-          <div className="score-grid">
-            {(Object.keys(result.scores) as Axis[]).map((key) => (
-              <div key={key}><div><span>{key}</span><small>{axisMeta[key].label}</small><b>{result.scores[key]}</b></div><i><em style={{ width: `${result.scores[key]}%`, background: axisMeta[key].color }} /></i></div>
-            ))}
-          </div>
-          <div className="actions"><button className="primary" onClick={restart}>もう一度診断する</button><button className="share" onClick={() => navigator.clipboard?.writeText(`私のECOタイプは「${result.name}（${result.code}）」でした！`)}>結果をコピー</button></div>
+          <p className="result-copy">{descriptions[result.main]}</p>
+          <div className="actions"><button className="result-next" onClick={() => navigator.clipboard?.writeText(`私のECOタイプは「${result.name}（${result.code}）」でした！`)}>結果をコピー</button><button className="result-restart" onClick={restart}>もう一度診断する</button></div>
         </section>
       )}
 
-      <footer>SETAGAYA × ECO TYPE PROJECT</footer>
+      {screen !== "result" && <footer>SETAGAYA × ECO TYPE PROJECT</footer>}
       <div className="stripe stripe-bottom" />
     </main>
   );
